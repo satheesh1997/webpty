@@ -1,0 +1,7 @@
+.python-version
+*.pyc
+
+dist
+build
+webpty.egg-info
+__pycache__
