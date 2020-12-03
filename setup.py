@@ -8,7 +8,7 @@ setup(
     version="1.0.0",
     author="Satheesh Kumar",
     author_email="mail@satheesh.dev",
-    description="Simple web based application to access system shell via browser",
+    description="A simple web-based application to access system shell via a browser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/satheesh1997/webpty",
