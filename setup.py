@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setup(
     name="webpty",
-    version="2.0.1",
+    version="2.0.2",
     author="Satheesh Kumar",
     author_email="mail@satheesh.dev",
-    description="A simple web-based application to access system shell via a browser",
+    description="A simple web-based application to access shells & shell based applications in the system via a browser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/satheesh1997/webpty",
