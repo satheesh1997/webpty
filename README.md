@@ -7,9 +7,9 @@ webpty is simple web-based application to access system shell(s) via a browser.
 
 ## Screens
 
-![alt Online Bash Shell](https://imgur.com/iNoW3jL)
-![alt Online Python Shell](https://imgur.com/YYK4YXs)
-![alt Online Vim](https://imgur.com/vfei1Ri)
+![alt Online Bash Shell](https://imgur.com/iNoW3jL.png)
+![alt Online Python Shell](https://imgur.com/YYK4YXs.png)
+![alt Online Vim](https://imgur.com/vfei1Ri.png)
 
 
 ## Installation
