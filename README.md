@@ -1,6 +1,6 @@
 # webpty
 
-webpty a simple web-based application to access shells & shell based applications in the system via a browser.
+webpty is a simple web-based application to access shells & shell based applications in the system via a browser.
 
 
 [![PyPI version](https://badge.fury.io/py/webpty.svg)](https://badge.fury.io/py/webpty)
