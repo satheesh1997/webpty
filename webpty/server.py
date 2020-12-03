@@ -17,21 +17,23 @@ from tornado import gen
 from tornado.options import define, options
 
 
-define("child_pid", 0)
-define("fd", 0)
+define("cpid", 0)
+define("ppid", 0)
 
 
 @gen.coroutine
-def read_and_update_tty_terminal(instance):
-    max_read_bytes = 1024 * 20
-
+def read_and_update_web_terminal(instance):
     while True:
         yield gen.sleep(0.01)
-        if options.fd:
-            timeout = 0
-            (output_generated, _, _) = select.select([options.fd], [], [], timeout)
+        if options.ppid:
+            (output_generated, _, _) = select.select(
+                [options.ppid],
+                [],
+                [],
+                0
+            )
             if output_generated:
-                output = os.read(options.fd, max_read_bytes).decode()
+                output = os.read(options.ppid, 1024 * 20).decode()
                 instance.write_message(output)
 
 
@@ -43,16 +45,16 @@ class IndexHandler(tornado.web.RequestHandler):
 class PtyHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
-        if options.child_pid:
+        if options.cpid:
             return
 
-        (child_pid, fd) = pty.fork()
-        if child_pid == 0:
-            subprocess.run("bash")
+        (cpid, ppid) = pty.fork()
+        if cpid == 0:
+            subprocess.run(options.cmd)
         else:
-            options.fd = fd
-            options.child_pid = child_pid
-            read_and_update_tty_terminal(self)
+            options.ppid = ppid
+            options.cpid = cpid
+            read_and_update_web_terminal(self)
 
     def on_message(self, message):
         message = json.loads(message)
@@ -67,16 +69,16 @@ class PtyHandler(tornado.websocket.WebSocketHandler):
                 0,
                 0
             )
-            fcntl.ioctl(options.fd, termios.TIOCSWINSZ, terminalsize)
+            fcntl.ioctl(options.ppid, termios.TIOCSWINSZ, terminalsize)
         elif action == "input":
-            os.write(options.fd, data["key"].encode())
+            os.write(options.ppid, data["key"].encode())
 
     def on_close(self):
-        options.fd = 0
-        options.child_pid = 0
+        options.ppid = 0
+        options.cpid = 0
 
 
-def start_server(port=8000):
+def start_server():
     appHandlers = [
         (r'/', IndexHandler),
         (r'/pty', PtyHandler)
@@ -89,7 +91,7 @@ def start_server(port=8000):
         **appSettings
     )
 
-    app.listen(port)
+    app.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
@@ -101,9 +103,14 @@ def main():
     parser.add_argument(
         '-p', '--port', type=int, default=8000,
         help='Port on which to run server.')
-
+    parser.add_argument(
+        '-c', '--cmd', type=str, default="bash",
+        help='Initial command to run in the shell')
     args = parser.parse_args()
-    start_server(port=args.port)
+    define("cmd", args.cmd)
+    define("port", args.port)
+
+    start_server()
 
 
 if __name__ == "__main__":
