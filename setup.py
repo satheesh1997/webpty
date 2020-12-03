@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="webpty",
-    version="1.0.0",
+    version="1.0.1",
     author="Satheesh Kumar",
     author_email="mail@satheesh.dev",
     description="A simple web-based application to access system shell via a browser",
@@ -14,6 +14,7 @@ setup(
     url="https://github.com/satheesh1997/webpty",
     license="License :: OSI Approved :: MIT License",
     include_package_data=True,
+    packages=["webpty"],
     keywords=[
         "xterm",
         "browser terminal",
