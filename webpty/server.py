@@ -17,23 +17,23 @@ from tornado import gen
 from tornado.options import define, options
 
 
-define("cpid", 0)
-define("ppid", 0)
+define("process_id", 0) # process id given by pty.fork()
+define("file_descriptor", 0) # file descriptor given by pty.fork()
 
 
 @gen.coroutine
 def read_and_update_web_terminal(instance):
     while True:
         yield gen.sleep(0.01)
-        if options.ppid:
+        if options.file_descriptor:
             (output_generated, _, _) = select.select(
-                [options.ppid],
+                [options.file_descriptor],
                 [],
                 [],
                 0
             )
             if output_generated:
-                output = os.read(options.ppid, 1024 * 20).decode()
+                output = os.read(options.file_descriptor, 1024 * 20).decode()
                 instance.write_message(output)
 
 
@@ -45,15 +45,15 @@ class IndexHandler(tornado.web.RequestHandler):
 class PtyHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
-        if options.cpid:
+        if options.process_id:
             return
 
-        (cpid, ppid) = pty.fork()
-        if cpid == 0:
+        (process_id, file_descriptor) = pty.fork()
+        if process_id == 0:
             subprocess.run(options.cmd)
         else:
-            options.ppid = ppid
-            options.cpid = cpid
+            options.process_id = process_id
+            options.file_descriptor = file_descriptor
             read_and_update_web_terminal(self)
 
     def on_message(self, message):
@@ -69,13 +69,13 @@ class PtyHandler(tornado.websocket.WebSocketHandler):
                 0,
                 0
             )
-            fcntl.ioctl(options.ppid, termios.TIOCSWINSZ, terminalsize)
+            fcntl.ioctl(options.file_descriptor, termios.TIOCSWINSZ, terminalsize)
         elif action == "input":
-            os.write(options.ppid, data["key"].encode())
+            os.write(options.file_descriptor, data["key"].encode())
 
     def on_close(self):
-        options.ppid = 0
-        options.cpid = 0
+        options.process_id = 0
+        options.file_descriptor = 0
 
 
 def start_server():
@@ -90,8 +90,9 @@ def start_server():
         appHandlers,
         **appSettings
     )
-
     app.listen(options.port)
+
+    print(f"Server listening on http://0.0.0.0:{options.port}")
     tornado.ioloop.IOLoop.instance().start()
 
 

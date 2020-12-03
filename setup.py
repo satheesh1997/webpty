@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="webpty",
-    version="2.0.2",
+    version="2.0.3",
     author="Satheesh Kumar",
     author_email="mail@satheesh.dev",
     description="A simple web-based application to access shells & shell based applications in the system via a browser",
@@ -16,12 +16,14 @@ setup(
     include_package_data=True,
     packages=["webpty"],
     keywords=[
-        "xterm",
-        "browser terminal",
-        "webpty",
-        "online shell",
+        "browser shell",
+        "xterm.js",
+        "sh online",
+        "bash online",
+        "python shell online",
         "online terminal",
-        "tornado"
+        "tornado",
+        "webpty"
     ],
     entry_points={"console_scripts": ["webpty=webpty.server:main"]},
     zip_safe=False,
