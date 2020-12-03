@@ -5,6 +5,17 @@ webpty is simple web-based application to access system shell(s) via a browser.
 
 [![PyPI version](https://badge.fury.io/py/webpty.svg)](https://badge.fury.io/py/webpty)
 
+## Screenshots
+
+#### Bash Shell
+![Online Bash Shell](https://imgur.com/iNoW3jL.png)
+
+#### Python Shell
+![Online Python Shell](https://imgur.com/YYK4YXs.png)
+
+#### VIM
+![Online Vim](https://imgur.com/vfei1Ri.png)
+
 
 ## Installation
 
@@ -25,28 +36,28 @@ This creates a tornado server which will be serving your bash shell on http://lo
 ### Change shell
 
 ```bash
-webpty -c <SHELL>
+webpty -c $SHELL
 ```
 or
 ```bash
-webpty --cmd=<SHELL>
+webpty --cmd=$SHELL
 
 ```
 
-This <SHELL> can be anything like bash, sh, python, etc. which is present in the system.
+This $SHELL can be anything like bash, sh, python, vim, etc. which is present in the system.
 
 ### Change port
 
 ```bash
-webpty -p <PORT>
+webpty -p $PORT
 ```
 or
 ```bash
-webpty --port=<PORT>
+webpty --port=$PORT
 
 ```
 
-This creates a tornado server which will be serving your bash shell on http://localhost:<PORT>/
+This creates a tornado server which will be serving your bash shell on http://localhost:$PORT/
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
