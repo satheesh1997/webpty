@@ -32,6 +32,13 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Operating System :: MacOS :: MacOS X",
+        # "Operating System :: Microsoft :: Windows', currently not supporting as fcntl is not supported in win32
+        "Operating System :: POSIX :: Linux",
+        "Environment :: Console",
+        "Environment :: Web Environment",
+        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Developers",
+        "Intended Audience :: System Administrators",
     ],
 )
