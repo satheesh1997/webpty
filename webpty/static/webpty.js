@@ -4,12 +4,13 @@ Terminal.applyAddon(fit)
 
 const delay = 50
 const host = window.location.host;
+const pathname = window.location.pathname;
 const terminal = new Terminal({
     cursorBlink: true,
     macOptionIsMeta: true,
     scrollback: true
 })
-const ws = new WebSocket(`ws://${host}/pty`)
+const ws = new WebSocket(`ws://${host}${pathname}pty`)
 
 function fitToScreen() {
     terminal.fit()
