@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="webpty",
-    version="2.0.3",
+    version="2.0.4",
     author="Satheesh Kumar",
     author_email="mail@satheesh.dev",
     description="A simple web-based application to access shells & shell based applications in the system via a browser",
