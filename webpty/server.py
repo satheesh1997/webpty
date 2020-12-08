@@ -44,6 +44,12 @@ class IndexHandler(tornado.web.RequestHandler):
 
 class PtyHandler(tornado.websocket.WebSocketHandler):
 
+    def check_origin(self, *args, **kwargs):
+        if options.allowed_hosts:
+            return self.request.host in options.allowed_hosts
+
+        return True
+
     def open(self):
         if options.process_id:
             return
@@ -99,17 +105,27 @@ def start_server():
 def main():
     parser = ArgumentParser(
         description=(
-            'Start the webpty application and control your system from '
-            ' terminal via browser.'))
+            'Start the webpty application and access your shell and '
+            'shell based applications via browser.'))
     parser.add_argument(
         '-p', '--port', type=int, default=8000,
         help='Port on which to run server.')
     parser.add_argument(
         '-c', '--cmd', type=str, default="bash",
         help='Initial command to run in the shell')
+    parser.add_argument(
+        '-ah', '--allowed-hosts', type=str, default=None,
+        help="Allows request from only hosts that are given as , seperated strings"
+    )
     args = parser.parse_args()
+    if args.allowed_hosts:
+        allowed_hosts = args.allowed_hosts.split(",")
+    else:
+        allowed_hosts = []
+
     define("cmd", args.cmd)
     define("port", args.port)
+    define("allowed_hosts", allowed_hosts)
 
     start_server()
 
