@@ -72,11 +72,9 @@ or
 ```bash
 webpty --allowed-hosts=$ALLOWED_HOSTS
 ```
+This creates a tornado server which  allows only requests from $ALLOWED_HOSTS.
 
-This $ALLOWED_HOSTS should be list of strings seperated by a comma.
-
-This creates a tornado server which will be serving your bash shell on http://localhost:$PORT/ and allows only
-requests from $ALLOWED_HOSTS.
+This $ALLOWED_HOSTS should be list of strings seperated by a comma. 
 
 
 ## Contributing
