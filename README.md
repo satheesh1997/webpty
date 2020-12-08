@@ -33,7 +33,7 @@ webpty
 
 This creates a tornado server which will be serving your bash shell on http://localhost:8000/
 
-### Change shell
+### Change Shell
 
 ```bash
 webpty -c $SHELL
@@ -46,7 +46,7 @@ webpty --cmd=$SHELL
 
 This $SHELL can be anything like bash, sh, python, vim, etc. which is present in the system.
 
-### Change port
+### Change Port
 
 ```bash
 webpty -p $PORT
@@ -58,6 +58,26 @@ webpty --port=$PORT
 ```
 
 This creates a tornado server which will be serving your bash shell on http://localhost:$PORT/
+
+
+### Change Allowed Hosts
+
+By default, the server will accept request from all the hosts without any restriction, to
+make it accept only from certain hosts
+
+```bash
+webpty -ah $ALLOWED_HOSTS
+```
+or
+```bash
+webpty --allowed-hosts=$ALLOWED_HOSTS
+```
+
+This $ALLOWED_HOSTS should be list of strings seperated by a comma.
+
+This creates a tornado server which will be serving your bash shell on http://localhost:$PORT/ and allows only
+requests from $ALLOWED_HOSTS.
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
