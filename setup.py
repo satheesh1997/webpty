@@ -1,14 +1,27 @@
-from setuptools import setup
+import ast
+import re
+import setuptools
+
+
+_version_re = re.compile(r"__version__\s+=\s+(.*)")
+
+
+with open("webpty/__init__.py", "rb") as f:
+    version = str(
+        ast.literal_eval(_version_re.search(f.read().decode("utf-8")).group(1))
+    )
+
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(
+
+setuptools.setup(
     name="webpty",
-    version="2.0.7",
+    version=version,
     author="Satheesh Kumar",
     author_email="mail@satheesh.dev",
-    description="A simple web-based application to access shells & shell based applications in the system via a browser",
+    description="A web-based application to access shell & shell based applications via a browser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/satheesh1997/webpty",
@@ -23,7 +36,7 @@ setup(
         "python shell online",
         "online terminal",
         "tornado",
-        "webpty"
+        "webpty",
     ],
     entry_points={"console_scripts": ["webpty=webpty.server:main"]},
     zip_safe=False,

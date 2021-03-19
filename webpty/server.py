@@ -1,5 +1,6 @@
 import fcntl
 import json
+import logging
 import os
 import pty
 import select
@@ -9,16 +10,15 @@ import termios
 
 from argparse import ArgumentParser
 
-import tornado.ioloop
-import tornado.web
-import tornado.websocket
-
 from tornado import gen
+from tornado.ioloop import IOLoop
 from tornado.options import define, options
+from tornado.web import RequestHandler, Application
+from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
 
-define("process_id", 0) # process id given by pty.fork()
-define("file_descriptor", 0) # file descriptor given by pty.fork()
+define("process_id", 0)  # process id given by pty.fork()
+define("file_descriptor", 0)  # file descriptor given by pty.fork()
 
 
 @gen.coroutine
@@ -27,27 +27,33 @@ def read_and_update_web_terminal(instance):
         yield gen.sleep(0.01)
         if options.file_descriptor:
             (output_generated, _, _) = select.select(
-                [options.file_descriptor],
-                [],
-                [],
-                0
+                [options.file_descriptor], [], [], 0
             )
             if output_generated:
-                output = os.read(options.file_descriptor, 1024 * 20).decode("utf-8", "ignore")
-                instance.write_message(output)
+                output = os.read(options.file_descriptor, 1024 * 20).decode(
+                    "utf-8", "ignore"
+                )
+                try:
+                    instance.write_message(output)
+                except WebSocketClosedError:
+                    logging.error(
+                        "WebSocketClosedError: socket connection with the client is not open"
+                    )
+                    break
+
+        else:
+            break
 
 
-class IndexHandler(tornado.web.RequestHandler):
+class IndexHandler(RequestHandler):
     def get(self):
         self.render("index.html")
 
 
-class PtyHandler(tornado.websocket.WebSocketHandler):
-
+class PtyHandler(WebSocketHandler):
     def check_origin(self, *args, **kwargs):
         if options.allowed_hosts:
             return self.request.host in options.allowed_hosts
-
         return True
 
     def open(self):
@@ -55,6 +61,7 @@ class PtyHandler(tornado.websocket.WebSocketHandler):
             return
 
         (process_id, file_descriptor) = pty.fork()
+
         if process_id == 0:
             subprocess.run(options.cmd)
         else:
@@ -64,16 +71,14 @@ class PtyHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         message = json.loads(message)
+        logging.debug("Message: %s", message)
+
         action = message.get("action")
         data = message.get("data")
 
         if action == "resize":
             terminalsize = struct.pack(
-                "HHHH",
-                data.get("rows", 50),
-                data.get("cols", 50),
-                0,
-                0
+                "HHHH", data.get("rows", 50), data.get("cols", 50), 0, 0
             )
             fcntl.ioctl(options.file_descriptor, termios.TIOCSWINSZ, terminalsize)
         elif action == "input":
@@ -85,49 +90,61 @@ class PtyHandler(tornado.websocket.WebSocketHandler):
 
 
 def start_server():
-    appHandlers = [
-        (r'/', IndexHandler),
-        (r'/pty', PtyHandler)
-    ]
-    appSettings = dict(
-        static_path=os.path.join(os.path.dirname(__file__), "static")
-    )
-    app = tornado.web.Application(
-        appHandlers,
-        **appSettings
-    )
+    handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler)]
+    settings = dict(static_path=os.path.join(os.path.dirname(__file__), "static"))
+    app = Application(handlers, **settings)
     app.listen(options.port)
 
-    print(f"Server listening on http://0.0.0.0:{options.port}")
     try:
-        tornado.ioloop.IOLoop.instance().start()
+        logging.info("Application listening on http://localhost:%d/" % options.port)
+        IOLoop.instance().start()
     except KeyboardInterrupt:
-        print("Server killed !!")
+        pass
 
 
 def main():
     parser = ArgumentParser(
         description=(
-            'Start the webpty application and access your shell and '
-            'shell based applications via browser.'))
+            "A web-based application to access shell & shell based applications via a browser"
+        )
+    )
     parser.add_argument(
-        '-p', '--port', type=int, default=8000,
-        help='Port on which to run server.')
+        "-p", "--port", type=int, default=8000, help="port to expose the webpty server."
+    )
     parser.add_argument(
-        '-c', '--cmd', type=str, default="bash",
-        help='Initial command to run in the shell')
+        "-c",
+        "--cmd",
+        type=str,
+        default="bash",
+        help="command to start a shell application, eg: (vim) to start vim.",
+    )
     parser.add_argument(
-        '-ah', '--allowed-hosts', type=str, default=None,
-        help="Allows request from only hosts that are given as , seperated strings"
+        "-ah",
+        "--allowed-hosts",
+        type=str,
+        default=None,
+        help="allows request from the hosts specified, eg: 127.0.0.1, satheesh.dev.",
     )
     args = parser.parse_args()
+
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)-5s - %(message)s",
+        level=logging.INFO,
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
     if args.allowed_hosts:
         allowed_hosts = args.allowed_hosts.split(",")
+        logging.debug("Using allowed_hosts: %s" % args.allowed)
     else:
         allowed_hosts = []
 
     define("cmd", args.cmd)
+    logging.debug("Using cmd: %s" % args.cmd)
+
     define("port", args.port)
+    logging.debug("Using port: %s" % args.port)
+
     define("allowed_hosts", allowed_hosts)
 
     start_server()
