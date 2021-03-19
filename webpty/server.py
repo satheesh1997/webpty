@@ -33,7 +33,7 @@ def read_and_update_web_terminal(instance):
                 0
             )
             if output_generated:
-                output = os.read(options.file_descriptor, 1024 * 20).decode()
+                output = os.read(options.file_descriptor, 1024 * 20).decode("utf-8", "ignore")
                 instance.write_message(output)
 
 
@@ -99,7 +99,10 @@ def start_server():
     app.listen(options.port)
 
     print(f"Server listening on http://0.0.0.0:{options.port}")
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        tornado.ioloop.IOLoop.instance().start()
+    except KeyboardInterrupt:
+        print("Server killed !!")
 
 
 def main():
