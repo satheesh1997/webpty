@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 tornado = ">=6.1"
-css-html-js-minify = "*"
 requests = "*"
 
 [dev-packages]
