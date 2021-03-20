@@ -1,25 +1,14 @@
 # webpty
 
-webpty is a simple web-based application to access shells & shell based applications in the system via a browser.
-
+Web based application to access shell & shell based applications via a browser.
 
 [![PyPI version](https://badge.fury.io/py/webpty.svg)](https://badge.fury.io/py/webpty)
 
-## Screenshots
-
-#### Bash Shell
-![Online Bash Shell](https://imgur.com/iNoW3jL.png)
-
-#### Python Shell
-![Online Python Shell](https://imgur.com/YYK4YXs.png)
-
-#### VIM
-![Online Vim](https://imgur.com/vfei1Ri.png)
-
+#
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install webpty.
+Use [pip](https://pip.pypa.io/en/stable/) and install webpty.
 
 ```bash
 pip install webpty
@@ -31,58 +20,76 @@ pip install webpty
 webpty
 ```
 
-This creates a tornado server which will be serving your bash shell on http://localhost:8000/
+Creates a tornado server which will be serving bash shell on http://localhost:8000/
 
 ### Change Shell
 
 ```bash
 webpty -c $SHELL
 ```
+
 or
+
 ```bash
 webpty --cmd=$SHELL
 
 ```
 
-This $SHELL can be anything like bash, sh, python, vim, etc. which is present in the system.
+This $SHELL can be bash, sh, python, vim, wtfutil, etc. that is available in the system.
 
 ### Change Port
 
 ```bash
 webpty -p $PORT
 ```
+
 or
+
 ```bash
 webpty --port=$PORT
 
 ```
 
-This creates a tornado server which will be serving your bash shell on http://localhost:$PORT/
-
+Creates a tornado server that server on the specified port http://localhost:$PORT/
 
 ### Change Allowed Hosts
 
-By default, the server will accept request from all the hosts without any restriction, to
-make it accept only from certain hosts
+By default, server will accept request from all the hosts without any restriction, to make it accept only from certain hosts,
 
 ```bash
 webpty -ah $ALLOWED_HOSTS
 ```
+
 or
+
 ```bash
 webpty --allowed-hosts=$ALLOWED_HOSTS
 ```
-This creates a tornado server which  allows only requests from $ALLOWED_HOSTS.
 
-This $ALLOWED_HOSTS should be list of strings seperated by a comma. 
+Server accepts only requests from $ALLOWED_HOSTS. This $ALLOWED_HOSTS should be list of strings seperated by a comma.
 
+#
+
+## Screenshots
+
+#### Bash
+
+![Online Bash Shell](https://imgur.com/iNoW3jL.png)
+
+#### Python
+
+![Online Python Shell](https://imgur.com/YYK4YXs.png)
+
+#### Vim
+
+![Online Vim](https://imgur.com/vfei1Ri.png)
+
+#
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-Please make sure to update tests as appropriate.
+Pull requests are welcome. Raise a issue and start a discussion before submitting a pr.
 
+#
 
-## -
 ![Python Powered](https://www.python.org/static/community_logos/python-powered-h-70x91.png)
-

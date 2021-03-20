@@ -25,6 +25,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/satheesh1997/webpty",
+    issues="https://github.com/satheesh1997/webpty/issues",
     license="License :: OSI Approved :: MIT License",
     include_package_data=True,
     packages=["webpty"],
