@@ -16,6 +16,8 @@ from tornado.options import define, options
 from tornado.web import RequestHandler, Application
 from tornado.websocket import WebSocketHandler, WebSocketClosedError
 
+from webpty import __version__
+
 
 define("process_id", 0)  # process id given by pty.fork()
 define("file_descriptor", 0)  # file descriptor given by pty.fork()
@@ -47,7 +49,7 @@ def read_and_update_web_terminal(instance):
 
 class IndexHandler(RequestHandler):
     def get(self):
-        self.render("index.html")
+        self.render("index.html", app_version=__version__)
 
 
 class PtyHandler(WebSocketHandler):
@@ -80,7 +82,8 @@ class PtyHandler(WebSocketHandler):
             terminalsize = struct.pack(
                 "HHHH", data.get("rows", 50), data.get("cols", 50), 0, 0
             )
-            fcntl.ioctl(options.file_descriptor, termios.TIOCSWINSZ, terminalsize)
+            fcntl.ioctl(options.file_descriptor,
+                        termios.TIOCSWINSZ, terminalsize)
         elif action == "input":
             os.write(options.file_descriptor, data["key"].encode())
 
@@ -91,12 +94,14 @@ class PtyHandler(WebSocketHandler):
 
 def start_server():
     handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler)]
-    settings = dict(static_path=os.path.join(os.path.dirname(__file__), "static"))
+    settings = dict(static_path=os.path.join(
+        os.path.dirname(__file__), "static"))
     app = Application(handlers, **settings)
     app.listen(options.port)
 
     try:
-        logging.info("Application listening on http://localhost:%d/" % options.port)
+        logging.info("Application listening on http://localhost:%d/" %
+                     options.port)
         IOLoop.instance().start()
     except KeyboardInterrupt:
         pass
