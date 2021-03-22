@@ -11,7 +11,11 @@ const terminal = new Terminal({
   macOptionIsMeta: true,
   scrollback: true,
 });
-const ws = new WebSocket(`ws://${host}${pathname}pty`);
+let webSocketProtocol = "ws";
+if (window.location.protocol.indexOf("https") === 0) {
+  webSocketProtocol = "wss";
+}
+const ws = new WebSocket(`${webSocketProtocol}://${host}${pathname}pty`);
 
 function fitToScreen() {
   terminal.fit();
