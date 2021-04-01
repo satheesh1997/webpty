@@ -12,7 +12,7 @@ body {
   height: 100%; /* force the BODY element to match the height of the HTML element */
 }
 
-#terminal {
+#webpty {
   position: absolute;
   top: 0;
   bottom: 0;

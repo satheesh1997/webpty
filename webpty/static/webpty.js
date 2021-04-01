@@ -1,8 +1,9 @@
-// Applying all terminal addons
+// terminal addons are to be added here
 Terminal.applyAddon(fullscreen);
 Terminal.applyAddon(fit);
 Terminal.applyAddon(webLinks);
 
+// all the constants are to be added here
 const delay = 50;
 const host = window.location.host;
 const pathname = window.location.pathname;
@@ -12,12 +13,11 @@ const terminal = new Terminal({
   macOptionIsMeta: true,
   scrollback: true,
 });
-let webSocketProtocol = "ws";
-if (window.location.protocol.indexOf("https") === 0) {
-  webSocketProtocol = "wss";
-}
+const terminalDivId = "webpty";
+const webSocketProtocol = window.location.protocol.indexOf("https") ? "ws" : "wss";
 const ws = new WebSocket(`${webSocketProtocol}://${host}${pathname}pty`);
 
+// utility functions are to be added here
 function fitToScreen() {
   terminal.fit();
   ws.send(
@@ -37,11 +37,11 @@ function resizeDelay(func, delay) {
   };
 }
 
-// all on event handlers
+// all on event handlers & listeners are to be added here
 window.onresize = resizeDelay(fitToScreen, delay);
 
 ws.onopen = function () {
-  terminal.open(document.getElementById("terminal"));
+  terminal.open(document.getElementById(terminalDivId));
   terminal.toggleFullScreen(true);
   terminal.setOption("scrollback", scrollBackLimit);
   fitToScreen();
@@ -51,6 +51,10 @@ ws.onmessage = function (event) {
   terminal.write(event.data);
 };
 
-terminal.on("key", (key, event) => {
+terminal.on("key", (key) => {
   ws.send(JSON.stringify({ action: "input", data: { key: key } }));
+});
+
+terminal.on("paste", (text) => {
+  ws.send(JSON.stringify({ action: "input", data: { key: text } }));
 });
