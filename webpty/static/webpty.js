@@ -6,6 +6,7 @@ Terminal.applyAddon(webLinks);
 const delay = 50;
 const host = window.location.host;
 const pathname = window.location.pathname;
+const scrollBackLimit = 5000; // current limit is 5000, change it in future if required
 const terminal = new Terminal({
   cursorBlink: true,
   macOptionIsMeta: true,
@@ -42,6 +43,7 @@ window.onresize = resizeDelay(fitToScreen, delay);
 ws.onopen = function () {
   terminal.open(document.getElementById("terminal"));
   terminal.toggleFullScreen(true);
+  terminal.setOption("scrollback", scrollBackLimit);
   fitToScreen();
 };
 
