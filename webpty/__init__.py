@@ -1,2 +1,2 @@
 __author__ = "Satheesh Kumar <mail@satheesh.dev>"
-__version__ = "3.1"
+__version__ = "3.2"
