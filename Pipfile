@@ -6,9 +6,10 @@ name = "pypi"
 [packages]
 tornado = ">=6.1"
 requests = "*"
+webpty = {path = ".", editable = true}
 
 [dev-packages]
 autopep8 = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.6"

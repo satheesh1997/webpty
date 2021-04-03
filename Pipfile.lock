@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2371f655e70a2ea4902673caf7327ebda9c0d4121ad09e1118bad573228c23d1"
+            "sha256": "7039fe379d25a1fc35de3828e8c81d0da3e3c6ff6f98952efdf5201ac98c31b8"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.9"
+            "python_version": "3.6"
         },
         "sources": [
             {
@@ -101,6 +101,10 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.26.4"
+        },
+        "webpty": {
+            "editable": true,
+            "path": "."
         }
     },
     "develop": {
