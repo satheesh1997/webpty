@@ -52,6 +52,25 @@ class IndexHandler(RequestHandler):
         self.render("index.html", app_version=__version__)
 
 
+class AuthHandler(RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Content-Type", 'application/json')
+
+    def post(self):
+        if options.password:
+            data = json.loads(self.request.body) if self.request.body else {}
+            webpty_pass = data.get('webptyPass', None)
+            if webpty_pass and webpty_pass == options.password:
+                self.set_cookie("webptyPass", options.password)
+                self.write(json.dumps({"status": "OK"}))
+            else:
+                self.write(json.dumps({"status": "NOK", "message": "Invalid password!!"}))
+        else:
+            self.write(json.dumps({
+                "status": "OK", "message": "This is not an secured application"
+            }))
+
+
 class PtyHandler(WebSocketHandler):
     def check_origin(self, *args, **kwargs):
         if options.allowed_hosts:
@@ -59,6 +78,12 @@ class PtyHandler(WebSocketHandler):
         return True
 
     def open(self):
+        if options.password:
+            client_password = self.get_cookie("webptyPass")
+            if not client_password or not client_password == options.password:
+                logging.info("Closing user connection due to invalid password!!")
+                self.close()
+
         if options.process_id:
             return
 
@@ -93,7 +118,7 @@ class PtyHandler(WebSocketHandler):
 
 
 def start_server():
-    handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler)]
+    handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler), (r"/auth", AuthHandler)]
     settings = dict(static_path=os.path.join(
         os.path.dirname(__file__), "static"))
     app = Application(handlers, **settings)
