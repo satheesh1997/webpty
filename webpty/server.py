@@ -102,6 +102,10 @@ def start_server():
     try:
         logging.info("Application listening on http://localhost:%d/" %
                      options.port)
+
+        if options.password:
+            logging.info("Application secured with the password!!")
+
         IOLoop.instance().start()
     except KeyboardInterrupt:
         pass
@@ -130,6 +134,13 @@ def main():
         default=None,
         help="allows request from the hosts specified, eg: 127.0.0.1, satheesh.dev.",
     )
+    parser.add_argument(
+        "-pass",
+        "--password",
+        type=str,
+        default=None,
+        help="password which will be used to secure the application"
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -151,6 +162,7 @@ def main():
     logging.debug("Using port: %s" % args.port)
 
     define("allowed_hosts", allowed_hosts)
+    define("password", args.password)
 
     start_server()
 
