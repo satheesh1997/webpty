@@ -56,7 +56,11 @@ def read_and_update_web_terminal(instance):
 
 class IndexHandler(RequestHandler):
     def get(self):
-        self.render("index.html", app_version=__version__)
+        self.render(
+            "index.html",
+            app_version=__version__,
+            is_secured=True if options.password else False,
+        )
 
 
 class AuthHandler(RequestHandler):
