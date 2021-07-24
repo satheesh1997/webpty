@@ -1,3 +1,10 @@
+"""
+Copyright 2019 by Satheesh Kumar D.
+
+Maintainer:
+    -> Satheesh Kumar D <mail@satheesh.dev>
+"""
+
 import fcntl
 import json
 import logging
@@ -49,7 +56,34 @@ def read_and_update_web_terminal(instance):
 
 class IndexHandler(RequestHandler):
     def get(self):
-        self.render("index.html", app_version=__version__)
+        self.render(
+            "index.html",
+            app_version=__version__,
+            is_secured=True if options.password else False,
+        )
+
+
+class AuthHandler(RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Content-Type", "application/json")
+
+    def post(self):
+        if options.password:
+            data = json.loads(self.request.body) if self.request.body else {}
+            webpty_pass = data.get("webptyPass", None)
+            if webpty_pass and webpty_pass == options.password:
+                self.set_cookie("webptyPass", options.password)
+                self.write(json.dumps({"status": "OK"}))
+            else:
+                self.write(
+                    json.dumps({"status": "NOK", "message": "Invalid password!!"})
+                )
+        else:
+            self.write(
+                json.dumps(
+                    {"status": "OK", "message": "This is not an secured application"}
+                )
+            )
 
 
 class PtyHandler(WebSocketHandler):
@@ -59,6 +93,12 @@ class PtyHandler(WebSocketHandler):
         return True
 
     def open(self):
+        if options.password:
+            client_password = self.get_cookie("webptyPass")
+            if not client_password or not client_password == options.password:
+                logging.info("Closing user connection due to invalid password!!")
+                self.close()
+
         if options.process_id:
             return
 
@@ -82,8 +122,7 @@ class PtyHandler(WebSocketHandler):
             terminalsize = struct.pack(
                 "HHHH", data.get("rows", 50), data.get("cols", 50), 0, 0
             )
-            fcntl.ioctl(options.file_descriptor,
-                        termios.TIOCSWINSZ, terminalsize)
+            fcntl.ioctl(options.file_descriptor, termios.TIOCSWINSZ, terminalsize)
         elif action == "input":
             os.write(options.file_descriptor, data["key"].encode())
 
@@ -93,15 +132,17 @@ class PtyHandler(WebSocketHandler):
 
 
 def start_server():
-    handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler)]
-    settings = dict(static_path=os.path.join(
-        os.path.dirname(__file__), "static"))
+    handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler), (r"/auth", AuthHandler)]
+    settings = dict(static_path=os.path.join(os.path.dirname(__file__), "static"))
     app = Application(handlers, **settings)
     app.listen(options.port)
 
     try:
-        logging.info("Application listening on http://localhost:%d/" %
-                     options.port)
+        logging.info("Application listening on http://localhost:%d/" % options.port)
+
+        if options.password:
+            logging.info("Application secured with the password!!")
+
         IOLoop.instance().start()
     except KeyboardInterrupt:
         pass
@@ -130,6 +171,13 @@ def main():
         default=None,
         help="allows request from the hosts specified, eg: 127.0.0.1, satheesh.dev.",
     )
+    parser.add_argument(
+        "-pass",
+        "--password",
+        type=str,
+        default=None,
+        help="password which will be used to secure the application",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -151,6 +199,7 @@ def main():
     logging.debug("Using port: %s" % args.port)
 
     define("allowed_hosts", allowed_hosts)
+    define("password", args.password)
 
     start_server()
 
