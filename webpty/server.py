@@ -1,3 +1,10 @@
+"""
+Copyright 2019 by Satheesh Kumar D.
+
+Maintainer:
+    -> Satheesh Kumar D <mail@satheesh.dev>
+"""
+
 import fcntl
 import json
 import logging
@@ -54,21 +61,25 @@ class IndexHandler(RequestHandler):
 
 class AuthHandler(RequestHandler):
     def set_default_headers(self):
-        self.set_header("Content-Type", 'application/json')
+        self.set_header("Content-Type", "application/json")
 
     def post(self):
         if options.password:
             data = json.loads(self.request.body) if self.request.body else {}
-            webpty_pass = data.get('webptyPass', None)
+            webpty_pass = data.get("webptyPass", None)
             if webpty_pass and webpty_pass == options.password:
                 self.set_cookie("webptyPass", options.password)
                 self.write(json.dumps({"status": "OK"}))
             else:
-                self.write(json.dumps({"status": "NOK", "message": "Invalid password!!"}))
+                self.write(
+                    json.dumps({"status": "NOK", "message": "Invalid password!!"})
+                )
         else:
-            self.write(json.dumps({
-                "status": "OK", "message": "This is not an secured application"
-            }))
+            self.write(
+                json.dumps(
+                    {"status": "OK", "message": "This is not an secured application"}
+                )
+            )
 
 
 class PtyHandler(WebSocketHandler):
@@ -107,8 +118,7 @@ class PtyHandler(WebSocketHandler):
             terminalsize = struct.pack(
                 "HHHH", data.get("rows", 50), data.get("cols", 50), 0, 0
             )
-            fcntl.ioctl(options.file_descriptor,
-                        termios.TIOCSWINSZ, terminalsize)
+            fcntl.ioctl(options.file_descriptor, termios.TIOCSWINSZ, terminalsize)
         elif action == "input":
             os.write(options.file_descriptor, data["key"].encode())
 
@@ -119,14 +129,12 @@ class PtyHandler(WebSocketHandler):
 
 def start_server():
     handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler), (r"/auth", AuthHandler)]
-    settings = dict(static_path=os.path.join(
-        os.path.dirname(__file__), "static"))
+    settings = dict(static_path=os.path.join(os.path.dirname(__file__), "static"))
     app = Application(handlers, **settings)
     app.listen(options.port)
 
     try:
-        logging.info("Application listening on http://localhost:%d/" %
-                     options.port)
+        logging.info("Application listening on http://localhost:%d/" % options.port)
 
         if options.password:
             logging.info("Application secured with the password!!")
@@ -164,7 +172,7 @@ def main():
         "--password",
         type=str,
         default=None,
-        help="password which will be used to secure the application"
+        help="password which will be used to secure the application",
     )
     args = parser.parse_args()
 
