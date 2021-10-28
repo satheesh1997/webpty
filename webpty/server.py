@@ -135,10 +135,10 @@ def start_server():
     handlers = [(r"/", IndexHandler), (r"/pty", PtyHandler), (r"/auth", AuthHandler)]
     settings = dict(static_path=os.path.join(os.path.dirname(__file__), "static"))
     app = Application(handlers, **settings)
-    app.listen(options.port)
+    app.listen(options.port, "0.0.0.0")
 
     try:
-        logging.info("Application listening on http://localhost:%d/" % options.port)
+        logging.info("Application listening on http://0.0.0.0:%d/" % options.port)
 
         if options.password:
             logging.info("Application secured with the password!!")
