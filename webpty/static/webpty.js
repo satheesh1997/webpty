@@ -57,6 +57,13 @@ function startApp() {
   terminal.on("paste", (text) => {
     ws.send(JSON.stringify({ action: "input", data: { key: text } }));
   });
+
+  function sendPing(){
+    ws.send(JSON.stringify({ action: "ping"}))
+  }
+  if(KEEP_ALIVE){
+    setInterval(sendPing,KEEP_ALIVE*1000)
+  }
 }
 
 function getPasswordFromCookie() {

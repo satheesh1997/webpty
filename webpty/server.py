@@ -60,6 +60,7 @@ class IndexHandler(RequestHandler):
             "index.html",
             app_version=__version__,
             is_secured=True if options.password else False,
+            keepalive=options.keepalive,
         )
 
 
@@ -178,6 +179,13 @@ def main():
         default=None,
         help="password which will be used to secure the application",
     )
+    parser.add_argument(
+        "-k",
+        "--keepalive",
+        type=int,
+        default=0,
+        help="interval(in seconds) at which heartbeat check is done(bydefault 0 to disable check)",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -200,6 +208,8 @@ def main():
 
     define("allowed_hosts", allowed_hosts)
     define("password", args.password)
+
+    define("keepalive",args.keepalive)
 
     start_server()
 
