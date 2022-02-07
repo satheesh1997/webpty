@@ -13,6 +13,7 @@
     <div id="webpty"></div>
     <script>
         const APP_SECURED = {% if is_secured %} true {% else %} false {% end %};
+        const KEEP_ALIVE = {{keepalive}};
     </script>
     <script src=".{{ static_url("xterm.min.js") }}"></script>
     <script src=".{{ static_url("xterm-addons/fullscreen.min.js") }}"></script>
