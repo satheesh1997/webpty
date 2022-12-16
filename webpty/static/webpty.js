@@ -10,6 +10,7 @@ function startApp() {
     cursorBlink: true,
     macOptionIsMeta: true,
     scrollback: true,
+    fontFamily: 'Source Code Pro'
   });
   const terminalDivId = "webpty";
   const webSocketProtocol = window.location.protocol.indexOf("https")
