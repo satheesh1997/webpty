@@ -106,7 +106,7 @@ class PtyHandler(WebSocketHandler):
         (process_id, file_descriptor) = pty.fork()
 
         if process_id == 0:
-            subprocess.run(options.cmd)
+            subprocess.run(options.cmd, check=False)
         else:
             options.process_id = process_id
             options.file_descriptor = file_descriptor
@@ -139,7 +139,7 @@ def start_server():
     app.listen(options.port, "0.0.0.0")
 
     try:
-        logging.info("Application listening on http://0.0.0.0:%d/" % options.port)
+        logging.info("Application listening on http://0.0.0.0:%s/", options.port)
 
         if options.password:
             logging.info("Application secured with the password!!")
@@ -196,20 +196,20 @@ def main():
 
     if args.allowed_hosts:
         allowed_hosts = args.allowed_hosts.split(",")
-        logging.debug("Using allowed_hosts: %s" % args.allowed)
+        logging.debug("Using allowed_hosts: %s", args.allowed)
     else:
         allowed_hosts = []
 
     define("cmd", args.cmd)
-    logging.debug("Using cmd: %s" % args.cmd)
+    logging.debug("Using cmd: %s", args.cmd)
 
     define("port", args.port)
-    logging.debug("Using port: %s" % args.port)
+    logging.debug("Using port: %s", args.port)
 
     define("allowed_hosts", allowed_hosts)
     define("password", args.password)
 
-    define("keepalive",args.keepalive)
+    define("keepalive", args.keepalive)
 
     start_server()
 
