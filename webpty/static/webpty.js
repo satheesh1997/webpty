@@ -1,16 +1,16 @@
-Terminal.applyAddon(fullscreen);
-Terminal.applyAddon(fit);
-Terminal.applyAddon(webLinks);
-
 function startApp() {
   const delay = 50;
   const host = window.location.host;
   const pathname = window.location.pathname;
   const scrollBackLimit = 5000; // current limit is 5000, change it in future if required
+  const fitAddon = new FitAddon.FitAddon();
   const terminal = new Terminal({
+    screenKeys: true,
+    useStyle: true,
     cursorBlink: true,
     macOptionIsMeta: true,
     scrollback: true,
+    fontFamily: 'Source Code Pro'
   });
   const terminalDivId = "webpty";
   const webSocketProtocol = window.location.protocol.indexOf("https")
@@ -18,8 +18,10 @@ function startApp() {
     : "wss";
   const ws = new WebSocket(`${webSocketProtocol}://${host}${pathname}pty`);
 
+  terminal.loadAddon(fitAddon);
+
   function fitToScreen() {
-    terminal.fit();
+    fitAddon.fit();
     ws.send(
       JSON.stringify({
         action: "resize",
@@ -41,8 +43,7 @@ function startApp() {
 
   ws.onopen = function () {
     terminal.open(document.getElementById(terminalDivId));
-    terminal.toggleFullScreen(true);
-    terminal.setOption("scrollback", scrollBackLimit);
+    terminal.options.scrollback = scrollBackLimit;
     fitToScreen();
   };
 
@@ -50,19 +51,29 @@ function startApp() {
     terminal.write(event.data);
   };
 
-  terminal.on("key", (key) => {
-    ws.send(JSON.stringify({ action: "input", data: { key: key } }));
+  terminal.onKey((event) => {
+    ws.send(JSON.stringify({ action: "input", data: { key: event.key } }));
   });
 
-  terminal.on("paste", (text) => {
-    ws.send(JSON.stringify({ action: "input", data: { key: text } }));
+  terminal.attachCustomKeyEventHandler((event) => {
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      event.code === "KeyV" &&
+      event.type === "keydown"
+    ) {
+      navigator.clipboard.readText().then((clipText) => {
+        ws.send(JSON.stringify({ action: "input", data: { key: clipText } }));
+      });
+    }
+    event.preventDefault();
   });
 
-  function sendPing(){
-    ws.send(JSON.stringify({ action: "ping"}))
+  function sendPing() {
+    ws.send(JSON.stringify({ action: "ping" }));
   }
-  if(KEEP_ALIVE){
-    setInterval(sendPing,KEEP_ALIVE*1000)
+
+  if (KEEP_ALIVE) {
+    setInterval(sendPing, KEEP_ALIVE * 1000);
   }
 }
 
@@ -98,7 +109,7 @@ if (APP_SECURED) {
           userPassword = null;
         }
         if (this.status === 200) {
-            location.reload();
+          location.reload();
         }
       };
     }
