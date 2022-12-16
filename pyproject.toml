@@ -10,7 +10,7 @@ license = "OSI Approved :: MIT License"
 python = ">=3.7,<3.9"
 tornado = "6.2"
 requests = "2.28.1"
-importlib = "^1.0.4"
+importlib-metadata = "^5.1.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.12.0"

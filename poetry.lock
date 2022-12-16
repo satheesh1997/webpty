@@ -69,18 +69,10 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
-name = "importlib"
-version = "1.0.4"
-description = "Backport of importlib.import_module() from Python 2.7"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "importlib-metadata"
 version = "5.1.0"
 description = "Read metadata from Python packages"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -167,7 +159,7 @@ python-versions = ">=3.6"
 name = "typing-extensions"
 version = "4.4.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -188,7 +180,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 name = "zipp"
 version = "3.11.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -199,7 +191,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<3.9"
-content-hash = "a094d6ea2a3676e639699a99e23e6679b291f2715a08a0f8b088ee0ed874082e"
+content-hash = "e7f8bdf909c2e030985de4ec7b8907348895d5b872c9da1f6eb0cefbb14bb298"
 
 [metadata.files]
 black = []
@@ -208,7 +200,6 @@ charset-normalizer = []
 click = []
 colorama = []
 idna = []
-importlib = []
 importlib-metadata = []
 mypy-extensions = []
 pathspec = []
