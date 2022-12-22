@@ -6,11 +6,10 @@ function startApp() {
   const fitAddon = new FitAddon.FitAddon();
   const terminal = new Terminal({
     screenKeys: true,
-    useStyle: true,
     cursorBlink: true,
     macOptionIsMeta: true,
     scrollback: true,
-    fontFamily: 'Source Code Pro'
+    fontFamily: "Source Code Pro",
   });
   const terminalDivId = "webpty";
   const webSocketProtocol = window.location.protocol.indexOf("https")
@@ -64,8 +63,8 @@ function startApp() {
       navigator.clipboard.readText().then((clipText) => {
         ws.send(JSON.stringify({ action: "input", data: { key: clipText } }));
       });
+      event.preventDefault();
     }
-    event.preventDefault();
   });
 
   function sendPing() {
