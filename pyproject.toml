@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "webpty"
-version = "3.6"
+version = "3.7"
 description = "A web-based application to access shell & shell based applications via a browser"
 readme = "README.md"
 authors = ["Satheesh Kumar <mail@satheesh.dev>"]
