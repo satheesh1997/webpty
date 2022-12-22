@@ -7,7 +7,7 @@ authors = ["Satheesh Kumar <mail@satheesh.dev>"]
 license = "OSI Approved :: MIT License"
 
 [tool.poetry.dependencies]
-python = ">=3.7,<3.9"
+python = ">=3.7,<=3.9"
 tornado = "6.2"
 requests = "2.28.1"
 importlib-metadata = "^5.1.0"
