@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "webpty"
-version = "3.8"
+version = "3.9"
 description = "A web-based application to access shell & shell based applications via a browser"
 readme = "README.md"
 authors = ["Satheesh Kumar <mail@satheesh.dev>"]
@@ -18,3 +18,6 @@ black = "^22.12.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+webpty = "webpty.server:main"
