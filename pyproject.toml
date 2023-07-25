@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "webpty"
-version = "3.7"
+version = "3.8"
 description = "A web-based application to access shell & shell based applications via a browser"
 readme = "README.md"
 authors = ["Satheesh Kumar <mail@satheesh.dev>"]
 license = "OSI Approved :: MIT License"
 
 [tool.poetry.dependencies]
-python = ">=3.7,<=3.9"
+python = ">=3.7,<=3.10"
 tornado = "6.2"
 requests = "2.28.1"
 importlib-metadata = "^5.1.0"

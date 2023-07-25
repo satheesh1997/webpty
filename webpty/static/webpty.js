@@ -1,3 +1,12 @@
+function callWithDelay(func, delay) {
+  let timeout;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), delay);
+  };
+}
+
 function startApp() {
   const delay = 50;
   const host = window.location.host;
@@ -21,6 +30,7 @@ function startApp() {
 
   function fitToScreen() {
     fitAddon.fit();
+    console.log(terminal.cols, terminal.rows);
     ws.send(
       JSON.stringify({
         action: "resize",
@@ -29,16 +39,7 @@ function startApp() {
     );
   }
 
-  function resizeDelay(func, delay) {
-    let timeout;
-    return function (...args) {
-      const context = this;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), delay);
-    };
-  }
-
-  window.onresize = resizeDelay(fitToScreen, delay);
+  window.onresize = callWithDelay(fitToScreen, delay);
 
   ws.onopen = function () {
     terminal.open(document.getElementById(terminalDivId));
@@ -114,4 +115,5 @@ if (APP_SECURED) {
     }
   }
 }
-startApp();
+
+window.onload = startApp;
